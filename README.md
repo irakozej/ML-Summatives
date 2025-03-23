@@ -32,6 +32,7 @@ Send a **POST request** with the necessary input values in JSON format. Example:
 
 ## **Demo Video**
 📽️ Watch the demo video (max 2 minutes) showcasing the working app:
+https://youtu.be/s20OcWlnJCk
 
 ---
 
