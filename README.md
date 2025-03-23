@@ -10,7 +10,7 @@ The API is publicly accessible and returns predictions based on the provided inp
 
 ### **API Endpoint:**
 ```
-https://bd30-34-75-121-70.ngrok-free.app/predict
+https://14f0-34-145-16-170.ngrok-free.app/docs
 ```
 
 ### **How to Use the API**
