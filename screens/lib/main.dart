@@ -1,19 +1,56 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 void main() {
-  runApp(PredictorApp());
+  runApp(MyApp());
 }
 
-class PredictorApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Internet Speed Predictor',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: PredictionScreen(),
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'assets/background.jpg',
+            ), // Make sure this image exists
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.3),
+              BlendMode.darken,
+            ),
+          ),
+        ),
+        child: Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              textStyle: TextStyle(fontSize: 18),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PredictionScreen()),
+              );
+            },
+            child: Text('Start Prediction'),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -24,42 +61,32 @@ class PredictionScreen extends StatefulWidget {
 }
 
 class _PredictionScreenState extends State<PredictionScreen> {
-  final TextEditingController _numDevicesController = TextEditingController();
-  String _predictionResult = "";
+  TextEditingController deviceController = TextEditingController();
+  String predictionResult = "";
 
-  Future<void> _predictSpeed() async {
-    final String apiUrl = "https://700a-34-106-59-83.ngrok-free.app/predict";
-
-    if (_numDevicesController.text.isEmpty) {
-      setState(() {
-        _predictionResult = "Please enter the number of connected devices.";
-      });
-      return;
-    }
+  Future<void> predict() async {
+    final url = Uri.parse("https://bd30-34-75-121-70.ngrok-free.app/predict");
 
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        url,
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "num_devices": int.parse(_numDevicesController.text),
-        }),
+        body: jsonEncode({"num_devices": int.parse(deviceController.text)}),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          _predictionResult =
-              "Predicted Speed: ${data['predicted_speed']} Mbps";
+          predictionResult = "Predicted Speed: ${data['predicted_speed']} Mbps";
         });
       } else {
         setState(() {
-          _predictionResult = "Error: ${response.body}";
+          predictionResult = "Error: Invalid input or server issue";
         });
       }
     } catch (e) {
       setState(() {
-        _predictionResult = "Failed to connect to API";
+        predictionResult = "Error: Unable to connect to server";
       });
     }
   }
@@ -67,27 +94,44 @@ class _PredictionScreenState extends State<PredictionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Speed Predictor')),
+      appBar: AppBar(title: Text("Internet Speed Predictor")),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              "Enter the number of connected devices:",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
             TextField(
-              controller: _numDevicesController,
+              controller: deviceController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'Number of Connected Devices',
                 border: OutlineInputBorder(),
+                hintText: "e.g., 5",
               ),
             ),
-            SizedBox(height: 16.0),
-            ElevatedButton(onPressed: _predictSpeed, child: Text('Predict')),
-            SizedBox(height: 16.0),
+            SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              onPressed: predict,
+              child: Text("Predict"),
+            ),
+            SizedBox(height: 20),
             Text(
-              _predictionResult,
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+              predictionResult,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 26, 15, 14),
+              ),
             ),
           ],
         ),
