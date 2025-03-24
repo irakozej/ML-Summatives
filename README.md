@@ -10,7 +10,7 @@ The API is publicly accessible and returns predictions based on the provided inp
 
 ### **API Endpoint:**
 ```
-https://14f0-34-145-16-170.ngrok-free.app/docs
+https://925f-34-91-255-41.ngrok-free.app/docs
 ```
 
 ### **How to Use the API**
@@ -24,7 +24,7 @@ Send a **POST request** with the necessary input values in JSON format. Example:
 ### **Example Response:**
 ```json
 {
-  "predicted_speed": 12.5
+  "predicted_speed": 27.61
 }
 ```
 
@@ -32,7 +32,7 @@ Send a **POST request** with the necessary input values in JSON format. Example:
 
 ## **Demo Video**
 📽️ Watch the demo video (max 2 minutes) showcasing the working app:
-https://youtu.be/s20OcWlnJCk
+https://youtu.be/tyAQJhEEzXA
 
 ---
 
